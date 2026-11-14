@@ -3,128 +3,279 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SI-BAKEPO CERIA</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<title>SI-BAKEPO CERIA - FINAL</title>
 <style>
-.grad{background:linear-gradient(135deg,#7c3aed,#ec4899)}
-.card{cursor:pointer}
-.hidden2{display:none}
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#FFF7FB}
+header{background:#7C3AED;color:white;padding:16px;text-align:center}
+header h1{margin:0;font-size:21px} header p{margin:5px 0 0;font-size:12px;opacity:.9}
+.card{background:white;margin:12px;border-radius:16px;padding:16px;box-shadow:0 2px 8px #eee}
+label{font-size:13px;font-weight:bold;display:block;margin-top:10px}
+input,select,textarea{width:100%;padding:10px;margin-top:5px;border:1px solid #ddd;border-radius:10px}
+.btn{width:100%;padding:12px;border:none;border-radius:12px;font-weight:bold;cursor:pointer;margin-top:12px}
+.u{background:#7C3AED;color:white} .h{background:#10B981;color:white} .p{background:#EC4899;color:white} .o{background:#F59E0B;color:white}
+.menu{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:10px}
+.menu button{border:none;padding:10px 12px;border-radius:20px;background:white;box-shadow:0 2px 5px #ddd;cursor:pointer;font-weight:bold;font-size:12px}
+.menu button.active{background:#7C3AED;color:white}
+.step{background:#F3E8FF;padding:8px 12px;border-radius:20px;font-size:12px;font-weight:bold;display:inline-block}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px;min-width:750px}
+th,td{border:1px solid #ddd;padding:7px;text-align:left;vertical-align:top} th{background:#EDE9FE}
+.hasil{padding:12px;border-radius:12px;text-align:center;font-weight:bold;margin-top:12px}
+.sehat{background:#D1FAE5;color:#065F46} .kurang{background:#FEE2E2;color:#991B1B} .waspada{background:#FEF3C7;color:#92400E}
+.wrap{overflow-x:auto}
+canvas{width:100%;height:180px;background:#F9FAFB;border-radius:12px;margin-top:10px}
+.top{display:flex;gap:8px} .top input{flex:1}
+@media print{ .no-print{display:none!important} header{background:#7C3AED!important;-webkit-print-color-adjust:exact} }
 </style>
 </head>
-<body class="bg-pink-50 min-h-screen font-sans">
+<body>
+
+<header class="no-print">
+<h1>SI-BAKEPO CERIA</h1>
+<p>Bayi, Balita, KB & Kesehatan Reproduksi Perempuan - Standar Kemenkes & WHO</p>
+<p id="infoBidan"></p>
+</header>
 
 <!-- LOGIN -->
-<div id="loginPage" class="max-w-md mx-auto pt-16 px-4">
-<div class="bg-white rounded-3xl shadow-xl p-6 text-center">
-<p class="text-4xl font-bold text-purple-700">SI-BAKEPO CERIA</p>
-<p class="text-sm text-gray-500 mt-2">BAyita - KEluarga Berencana - KesPO<br>Kelompok 5 dan 6 - Dosen: Ibu Yufa</p>
-<input id="namaBidan" placeholder="Input Nama Bidan..." class="w-full mt-5 border rounded-xl p-3">
-<button onclick="login()" class="w-full grad text-white font-bold rounded-xl p-3 mt-3">Masuk Dashboard</button>
-<p class="text-xs text-gray-400 mt-3">Data auto-save di HP - Tidak hilang</p>
+<div id="login" class="card">
+<span class="step">LOGIN BIDAN</span>
+<h3>Selamat Datang di Posyandu 👋</h3>
+<label>Nama Bidan</label><input id="namaBidan" placeholder="Contoh: Bidan Yufa">
+<label>Password / PIN</label><input id="pin" type="password" placeholder="Contoh: 1234">
+<button class="btn u" onclick="login()">MASUK SEBAGAI BIDAN →</button>
+<p style="font-size:12px;color:#666">Login demo: isi nama apa saja, PIN apa saja, langsung masuk.</p>
 </div>
+
+<!-- MENU UTAMA -->
+<div id="app" style="display:none">
+<div class="menu no-print">
+<button onclick="show('dash')" id="b-dash" class="active">Dashboard</button>
+<button onclick="show('bayi')" id="b-bayi">Bayi & Balita + KMS</button>
+<button onclick="show('imun')" id="b-imun">Imunisasi + Rotavirus</button>
+<button onclick="show('hamil')" id="b-hamil">Ibu Hamil / Nifas</button>
+<button onclick="show('kb')" id="b-kb">KB</button>
+<button onclick="show('kespro')" id="b-kespro">Kespro / IVA / Menopause</button>
+<button onclick="show('konseling')" id="b-konseling">Konseling</button>
+<button onclick="logout()" style="background:#FEE2E2">Logout</button>
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashPage" class="max-w-md mx-auto px-4 pt-6 hidden2">
-<div class="grad rounded-3xl text-white p-5">
-<p class="text-sm opacity-80">Selamat Datang Bidan,</p>
-<h2 id="hiBidan" class="text-xl font-bold">Bidan</h2>
-<p class="text-xs opacity-80">Pilih 1 menu di bawah - Data tersimpan otomatis</p>
+<div id="dash" class="card">
+<span class="step">DASHBOARD LENGKAP - SEMUA PASIEN TERSIMPAN DISINI</span>
+<h3>Dashboard Posyandu</h3>
+<div class="top no-print">
+<input id="cari" placeholder="Cari nama pasien..." onkeyup="renderDash()">
+<select id="filterJenis" onchange="renderDash()"><option value="">Semua Jenis Kunjungan</option><option>Penimbangan / Tumbuh Kembang</option><option>Imunisasi</option><option>KB</option><option>IVA / Kespro</option><option>Konseling</option><option>ANC Ibu Hamil</option></select>
 </div>
-<div class="grid grid-cols-2 gap-3 mt-4">
-<div onclick="openMenu('bayi')" class="card bg-white rounded-2xl shadow p-4 text-center"><b>1. BA - BAYI</b><p class="text-xs text-gray-500">BB / TB / LK - KPSP / KMS</p></div>
-<div onclick="openMenu('balita')" class="card bg-white rounded-2xl shadow p-4 text-center"><b>2. BALITA</b><p class="text-xs text-gray-500">Tumbuh Kembang - KMS</p></div>
-<div onclick="openMenu('imunisasi')" class="card bg-white rounded-2xl shadow p-4 text-center"><b>3. IMUNISASI</b><p class="text-xs text-gray-500">BCG - Polio - DPT - Campak</p></div>
-<div onclick="openMenu('kb')" class="card bg-white rounded-2xl shadow p-4 text-center"><b>4. KE - KB</b><p class="text-xs text-gray-500">Konseling - Metode - Kontrol</p></div>
-</div>
-<div onclick="openMenu('iva')" class="card bg-white rounded-2xl shadow p-4 text-center mt-3"><b>5. PO - KESPRO IVA TEST</b><p class="text-xs text-gray-500">WUS 30-50 Th - Asam Asetat 3-5% - Negatif / Positif</p></div>
-<button onclick="openMenu('laporan')" class="w-full bg-blue-600 text-white font-bold rounded-xl p-3 mt-4">LIHAT LAPORAN DAN EXPORT</button>
-<button onclick="logout()" class="w-full text-gray-500 text-sm mt-2">Keluar</button>
-<p class="text-center text-xs text-gray-400 mt-3">Referensi: Kemenkes 2020 - Kemenkes 2021 - IDAI 2024 - BKKBN - WHO IVA</p>
+<p><b>Total Kunjungan:</b> <span id="tot">0</span> | <b>Perlu Rujuk:</b> <span id="totRujuk">0</span></p>
+<div class="wrap"><div id="tabelDash"></div></div>
+<button class="btn h no-print" onclick="window.print()">🖨️ CETAK LAPORAN UNTUK IBU YUFA / KADER</button>
+<button class="btn o no-print" onclick="contohData()">ISI CONTOH DATA BIAR CEPAT DEMO</button>
 </div>
 
-<!-- FORM -->
-<div id="formPage" class="max-w-md mx-auto px-4 pt-6 hidden2">
-<button onclick="backDash()" class="text-purple-700 font-bold">Kembali</button>
-<h2 id="formTitle" class="text-xl font-bold mt-2">Form</h2><p id="formDesc" class="text-sm text-gray-500"></p>
-<div class="bg-white rounded-2xl shadow p-4 mt-4 space-y-3">
-<div><label class="text-sm font-bold">Nama Pasien / Bayi / Ibu</label><input id="fNama" oninput="autoSave()" class="w-full border rounded-xl p-3" placeholder="Nama lengkap..."></div>
-<div class="grid grid-cols-3 gap-2">
-<div><label class="text-xs font-bold">BB (kg)</label><input id="fBB" type="number" oninput="autoSave();hitungGizi()" class="w-full border rounded-xl p-3" placeholder="0.0"></div>
-<div><label class="text-xs font-bold">TB (cm)</label><input id="fTB" type="number" oninput="autoSave()" class="w-full border rounded-xl p-3" placeholder="0"></div>
-<div><label class="text-xs font-bold">LK (cm)</label><input id="fLK" type="number" oninput="autoSave()" class="w-full border rounded-xl p-3" placeholder="0"></div>
-</div>
-<div><label class="text-sm font-bold">Umur / Keterangan</label><input id="fUmur" oninput="autoSave()" class="w-full border rounded-xl p-3" placeholder="Contoh: 6 bulan / 32 tahun"></div>
-
-<div id="boxBayi">
-<label class="text-sm font-bold">Skrining KPSP / KMS</label>
-<select id="fKPSP" onchange="autoSave()" class="w-full border rounded-xl p-3"><option>Sesuai</option><option>Meragukan</option><option>Penyimpangan</option></select>
-<label class="text-sm font-bold mt-2 block">Status Gizi (Otomatis)</label>
-<input id="fGizi" readonly class="w-full bg-yellow-50 border rounded-xl p-3 font-bold" placeholder="Isi BB dulu...">
-</div>
-
-<div id="boxImunisasi" class="hidden2">
-<label class="text-sm font-bold">Imunisasi yang Sudah Diberikan</label>
-<div class="grid grid-cols-2 gap-2 text-sm mt-1">
-<label><input type="checkbox" class="imun" value="HB0" onchange="autoSave()"> HB0 (0-24 jam)</label>
-<label><input type="checkbox" class="imun" value="BCG" onchange="autoSave()"> BCG (1 bln)</label>
-<label><input type="checkbox" class="imun" value="Polio" onchange="autoSave()"> Polio</label>
-<label><input type="checkbox" class="imun" value="DPT" onchange="autoSave()"> DPT-HB-Hib</label>
-<label><input type="checkbox" class="imun" value="IPV" onchange="autoSave()"> IPV</label>
-<label><input type="checkbox" class="imun" value="Campak-MR" onchange="autoSave()"> Campak-Rubela</label>
-</div>
-<p class="text-xs text-gray-500 mt-1">Jadwal IDAI 2024: 9 bln MR1, 18 bln DPT4 + MR2</p>
+<!-- BAYI -->
+<div id="bayi" class="card" style="display:none">
+<span class="step">MENU BAYI & BALITA - Standar WHO & Kemenkes</span>
+<label>Nama Bayi / Balita *</label><input id="b_nama" placeholder="Contoh: Aisyah">
+<label>Tanggal Lahir</label><input id="b_tgl" type="date">
+<label>Jenis Kelamin</label><select id="b_jk"><option>Laki-laki</option><option>Perempuan</option></select>
+<label>Nama Ibu</label><input id="b_ibu" placeholder="Nama Ibu">
+<label>Berat Badan (kg) * - BB/U WHO</label><input id="b_bb" type="number" step="0.1" placeholder="8.5">
+<label>Tinggi / Panjang Badan (cm) - TB/U WHO</label><input id="b_tb" type="number" placeholder="75">
+<label>Lingkar Kepala (cm)</label><input id="b_lk" type="number" placeholder="42">
+<label>Lingkar Lengan Atas / LILA (cm)</label><input id="b_lila" type="number" placeholder="13">
+<label>Tumbuh Kembang KPSP Kemenkes</label><select id="b_kpsp"><option>Sesuai Umur</option><option>Meragukan</option><option>Penyimpangan - Rujuk</option></select>
+<label>Jenis Kunjungan</label><select id="b_kunj"><option>Penimbangan / Tumbuh Kembang</option><option>Imunisasi</option></select>
+<button class="btn u" onclick="simpanBayi()">SIMPAN & LIHAT KMS + GIZI →</button>
+<div id="hasilBayi"></div>
+<canvas id="grafikKMS" width="600" height="180"></canvas>
+<p style="font-size:12px">Grafik KMS WHO: Hijau = Normal, Kuning = Waspada, Merah = Rujuk. Kalau titik naik terus = Sehat.</p>
 </div>
 
-<div id="boxKB" class="hidden2">
-<label class="text-sm font-bold">Metode KB - Konseling ABPK / Roda KLOP</label>
-<select id="fKB" onchange="autoSave()" class="w-full border rounded-xl p-3"><option>Pil</option><option>Suntik</option><option>Implan</option><option>AKDR / IUD</option><option>Kondom</option><option>MOW / MOP</option></select>
-<label class="text-sm font-bold mt-2 block">Efek Samping</label>
-<input id="fEfek" oninput="autoSave()" class="w-full border rounded-xl p-3" placeholder="Contoh: Gangguan haid / kram...">
-<label class="text-sm font-bold mt-2 block">Jadwal Kontrol</label>
-<input id="fKontrol" type="date" onchange="autoSave()" class="w-full border rounded-xl p-3">
-<p class="text-xs text-gray-500">AKDR kontrol 7 hari / 4-6 minggu - Implan jaga kering 4 hari</p>
+<!-- IMUNISASI -->
+<div id="imun" class="card" style="display:none">
+<span class="step">MENU IMUNISASI - Jadwal Kemenkes 2024 & WHO</span>
+<label>Nama Pasien (Bayi / Balita) *</label><input id="i_nama" placeholder="Contoh: Aisyah">
+<label>Jenis Imunisasi *</label>
+<select id="i_jenis" onchange="autoKembali()">
+<option>Hepatitis B</option><option>BCG</option><option>Polio</option>
+<option>DPT-HB-Hib 1</option><option>DPT-HB-Hib 2</option><option>DPT-HB-Hib 3</option>
+<option>Rotavirus 1 - Tetes Mulut</option><option>Rotavirus 2 - Tetes Mulut</option><option>Rotavirus 3 - Tetes Mulut (RotaTeq)</option>
+<option>PCV 1</option><option>PCV 2</option><option>PCV 3</option>
+<option>IPV</option><option>Campak Rubella</option><option>DPT-HB-Hib Lanjutan</option><option>Campak Rubella Lanjutan</option>
+<option>Vitamin A Biru (6-11 bln)</option><option>Vitamin A Merah (12-59 bln)</option><option>Obat Cacing</option>
+</select>
+<label>Pelayanan Yang Diberikan Bidan *</label>
+<select id="i_layan"><option>Skrining + Penyuluhan + Penyuntikan + Observasi 30 menit KIPI</option><option>Pemberian Tetes Rotavirus + Penyuluhan ASI & Kebersihan</option><option>Pemberian Vitamin A + Penyuluhan Gizi</option><option>Penimbangan + Penyuluhan + Imunisasi</option></select>
+<label>Tanggal Imunisasi</label><input id="i_tgl" type="date">
+<label>Tanggal Kembali (Otomatis)</label><input id="i_kembali" type="date" readonly>
+<label>KIPI / Efek Samping</label><select id="i_kipi"><option>Tidak Ada KIPI</option><option>Demam Ringan</option><option>Rewel</option><option>Diare Ringan</option><option>Bengkak Bekas Suntik</option></select>
+<label>Tindak Lanjut</label><input id="i_tindak" value="Kembali sesuai tanggal kembali untuk dosis berikutnya">
+<button class="btn p" onclick="simpanImun()">SIMPAN IMUNISASI → MASUK DASHBOARD</button>
+<div id="hasilImun"></div>
 </div>
 
-<div id="boxIVA" class="hidden2">
-<label class="text-sm font-bold">Hasil IVA Test - Oles Asam Asetat 3-5%</label>
-<select id="fIVA" onchange="autoSave();hitungIVA()" class="w-full border rounded-xl p-3"><option value="">Pilih Hasil...</option><option value="NEGATIF">NEGATIF - Tidak ada bercak putih</option><option value="POSITIF">POSITIF - Ada bercak putih Acetowhite</option></select>
-<div id="hasilIVA" class="font-bold rounded-xl p-3 mt-2 bg-gray-100">Belum dipilih</div>
+<!-- IBU HAMIL -->
+<div id="hamil" class="card" style="display:none">
+<span class="step">MENU IBU HAMIL & NIFAS - Standar Kemenkes</span>
+<label>Nama Ibu Hamil *</label><input id="h_nama">
+<label>Usia Kehamilan (minggu)</label><input id="h_uk" type="number" placeholder="28">
+<label>Tekanan Darah</label><input id="h_td" placeholder="120/80">
+<label>BB (kg) / Hb</label><input id="h_hb" placeholder="BB 60 kg, Hb 11">
+<label>Pelayanan Bidan</label><select id="h_layan"><option>ANC + TTD + Penyuluhan</option><option>ANC + Imunisasi TT</option><option>Pemeriksaan Nifas + KB Pasca Salin</option></select>
+<label>Hasil Pemeriksaan</label><select id="h_hasil"><option>Normal - Kehamilan Sehat</option><option>Anemia - Beri TTD</option><option>Preeklamsi - Rujuk ke Puskesmas</option><option>Perlu Rujuk</option></select>
+<label>Tindak Lanjut</label><input id="h_tindak" value="Kontrol ANC 1 bulan lagi / Persalinan di Faskes">
+<button class="btn u" onclick="simpanHamil()">SIMPAN → DASHBOARD</button>
 </div>
 
-<div><label class="text-sm font-bold">Catatan Bidan</label><textarea id="fCatatan" oninput="autoSave()" class="w-full border rounded-xl p-3" placeholder="Catatan..."></textarea></div>
-<button onclick="simpanData()" class="w-full grad text-white font-bold rounded-xl p-3">SIMPAN DATA</button>
-<p id="saveInfo" class="text-center text-xs text-green-600 font-bold"></p>
-</div>
+<!-- KB -->
+<div id="kb" class="card" style="display:none">
+<span class="step">MENU KB - Standar Kemenkes</span>
+<label>Nama Akseptor KB *</label><input id="k_nama">
+<label>Metode KB</label><select id="k_metode" onchange="autoKB()"><option>Pil</option><option>Suntik 1 Bulan</option><option>Suntik 3 Bulan</option><option>Implant</option><option>IUD</option><option>Kondom</option></select>
+<label>Pelayanan Bidan</label><select id="k_layan"><option>Konseling + Pemberian KB</option><option>Pemasangan Implant / IUD</option><option>Kontrol Ulang KB</option><option>Pencabutan Implant / IUD</option></select>
+<label>Tanggal Pelayanan</label><input id="k_tgl" type="date">
+<label>Tanggal Kembali / Kontrol (Otomatis)</label><input id="k_kembali" type="date" readonly>
+<label>Efek Samping</label><select id="k_efek"><option>Tidak Ada Keluhan</option><option>Mual / Pusing</option><option>Haid Tidak Teratur</option><option>Flek</option></select>
+<label>Tindak Lanjut</label><input id="k_tindak" value="Lanjut metode sama, kontrol sesuai tanggal kembali">
+<button class="btn p" onclick="simpanKB()">SIMPAN KB → DASHBOARD</button>
 </div>
 
-<!-- LAPORAN -->
-<div id="lapPage" class="max-w-md mx-auto px-4 pt-6 hidden2">
-<button onclick="backDash()" class="text-purple-700 font-bold">Kembali</button>
-<h2 class="text-xl font-bold mt-2">Laporan dan Evaluasi</h2><p class="text-sm text-gray-500">Semua data dari LocalStorage - Bisa di-export</p>
-<div id="listLaporan" class="space-y-2 mt-4"></div>
-<button onclick="exportCSV()" class="w-full bg-green-600 text-white font-bold rounded-xl p-3 mt-4">Export CSV / Excel</button>
-<button onclick="hapusSemua()" class="w-full text-red-500 text-sm mt-2">Hapus Semua Data</button>
+<!-- KESPRO -->
+<div id="kespro" class="card" style="display:none">
+<span class="step">MENU KESPRO / IVA / MENOPAUSE - Standar Kemenkes & WHO</span>
+<label>Nama Perempuan *</label><input id="s_nama">
+<label>Kategori</label><select id="s_kat"><option>Wanita Usia Subur (15-49 th)</option><option>Perimenopause</option><option>Menopause</option></select>
+<label>Jenis Kunjungan</label><select id="s_kunj"><option>IVA / Kespro</option><option>Pemeriksaan Payudara (SADARI)</option><option>Konseling Menopause</option></select>
+<label>Pelayanan Bidan</label><select id="s_layan"><option>Tes IVA + Konseling</option><option>Pemeriksaan Payudara + Edukasi SADARI</option><option>Konseling Perimenopause / Menopause + Cek Tensi & Gula Darah</option></select>
+<label>Hasil IVA / Pemeriksaan</label><select id="s_hasil"><option>IVA Negatif - Normal</option><option>IVA Positif - Rujuk ke Puskesmas</option><option>IVA Radang</option><option>Payudara Normal</option><option>Keluhan Menopause - Hot Flush, Susah Tidur</option></select>
+<label>Tindak Lanjut</label><input id="s_tindak" value="Ulang IVA 3-5 tahun / Rujuk jika positif">
+<button class="btn u" onclick="simpanKespro()">SIMPAN KESPRO / IVA → DASHBOARD</button>
+</div>
+
+<!-- KONSELING -->
+<div id="konseling" class="card" style="display:none">
+<span class="step">MENU KONSELING - Standar Kemenkes</span>
+<label>Nama Yang Dikonseling *</label><input id="c_nama">
+<label>Topik Konseling</label><select id="c_topik"><option>KB</option><option>Kehamilan & Menyusui</option><option>Tumbuh Kembang Anak</option><option>IVA</option><option>Perimenopause / Menopause</option><option>Gizi & Vitamin A</option></select>
+<label>Hasil Konseling / Saran Bidan</label><textarea id="c_hasil" rows="2">Sudah diberikan edukasi, ibu memahami dan bersedia kontrol ulang.</textarea>
+<label>Tindak Lanjut</label><input id="c_tindak" value="Kontrol ulang sesuai jadwal / Kunjungan rumah jika perlu">
+<button class="btn h" onclick="simpanKons()">SIMPAN KONSELING → DASHBOARD</button>
+</div>
+
 </div>
 
 <script>
-let menuAktif='bayi';
-const titles={bayi:['BA - BAYI','Registrasi Bayi - BB/TB/LK - KPSP/KMS - Status Gizi'],balita:['BALITA','Pemantauan Tumbuh Kembang - Plot KMS NAIK / TIDAK NAIK'],imunisasi:['IMUNISASI','BCG - Polio - DPT - Campak - HB0 - IPV - MR - IDAI 2024'],kb:['KE - KELUARGA BERENCANA','Konseling ABPK / Roda KLOP - Metode - Efek Samping - Kontrol'],iva:['PO - KESPRO IVA TEST','WUS 30-50 Th - Sudah Menikah - Tidak Haid / Hamil - Asam Asetat 3-5%']};
-function show(id){['loginPage','dashPage','formPage','lapPage'].forEach(x=>document.getElementById(x).classList.add('hidden2'));document.getElementById(id).classList.remove('hidden2')}
-function login(){let n=document.getElementById('namaBidan').value.trim();if(!n){alert('Isi Nama Bidan dulu ya!');return}localStorage.setItem('bakepo_bidan',n);document.getElementById('hiBidan').innerText=n;show('dashPage')}
-function logout(){show('loginPage')}
-function openMenu(m){if(m==='laporan'){tampilLaporan();show('lapPage');return}menuAktif=m;document.getElementById('formTitle').innerText=titles[m][0];document.getElementById('formDesc').innerText=titles[m][1];['boxBayi','boxImunisasi','boxKB','boxIVA'].forEach(x=>document.getElementById(x).classList.add('hidden2'));if(m==='bayi'||m==='balita')document.getElementById('boxBayi').classList.remove('hidden2');if(m==='imunisasi')document.getElementById('boxImunisasi').classList.remove('hidden2');if(m==='kb')document.getElementById('boxKB').classList.remove('hidden2');if(m==='iva')document.getElementById('boxIVA').classList.remove('hidden2');loadDraft();show('formPage')}
-function backDash(){show('dashPage')}
-function hitungGizi(){let bb=parseFloat(document.getElementById('fBB').value);let el=document.getElementById('fGizi');if(!bb){el.value='';return}if(bb<2.5)el.value='BB Sangat Rendah - Rujuk Segera';else if(bb<5)el.value='Perlu Pantau - Cek KMS';else el.value='BB Cukup - Lanjut Pantau KMS NAIK / TIDAK NAIK'}
-function hitungIVA(){let v=document.getElementById('fIVA').value;let el=document.getElementById('hasilIVA');if(v==='NEGATIF'){el.innerText='NEGATIF: Konseling Pencegahan - Kontrol Rutin';el.className='font-bold rounded-xl p-3 mt-2 bg-green-100 text-green-700'}else if(v==='POSITIF'){el.innerText='POSITIF: Rujukan Faskes Lanjutan SEGERA';el.className='font-bold rounded-xl p-3 mt-2 bg-red-100 text-red-700'}else{el.innerText='Belum dipilih';el.className='font-bold rounded-xl p-3 mt-2 bg-gray-100'}}
-function getForm(){let imun=[...document.querySelectorAll('.imun:checked')].map(e=>e.value).join(', ');return{menu:menuAktif,nama:document.getElementById('fNama').value,bb:document.getElementById('fBB').value,tb:document.getElementById('fTB').value,lk:document.getElementById('fLK').value,umur:document.getElementById('fUmur').value,kpsp:document.getElementById('fKPSP').value,gizi:document.getElementById('fGizi').value,imun:imun,kb:document.getElementById('fKB').value,efek:document.getElementById('fEfek').value,kontrol:document.getElementById('fKontrol').value,iva:document.getElementById('fIVA').value,catatan:document.getElementById('fCatatan').value,tanggal:new Date().toLocaleString('id-ID')}}
-function autoSave(){localStorage.setItem('bakepo_draft_'+menuAktif,JSON.stringify(getForm()));document.getElementById('saveInfo').innerText='Auto-save: tersimpan di HP'}
-function loadDraft(){let d=JSON.parse(localStorage.getItem('bakepo_draft_'+menuAktif)||'null');if(!d)return;document.getElementById('fNama').value=d.nama||'';document.getElementById('fBB').value=d.bb||'';document.getElementById('fTB').value=d.tb||'';document.getElementById('fLK').value=d.lk||'';document.getElementById('fUmur').value=d.umur||'';document.getElementById('fCatatan').value=d.catatan||'';hitungGizi();hitungIVA()}
-function simpanData(){let data=JSON.parse(localStorage.getItem('bakepo_data')||'[]');data.push(getForm());localStorage.setItem('bakepo_data',JSON.stringify(data));alert('Data tersimpan! Lihat di Laporan ya.');backDash()}
-function tampilLaporan(){let data=JSON.parse(localStorage.getItem('bakepo_data')||'[]');let el=document.getElementById('listLaporan');if(!data.length){el.innerHTML='<p class="bg-white rounded-xl p-4 text-center text-gray-500">Belum ada data. Isi form dulu ya!</p>';return}el.innerHTML=data.map((d,i)=>`<div class="bg-white rounded-xl shadow p-3 text-sm"><b>${i+1}. ${d.nama||'-'} - ${d.menu.toUpperCase()}</b><br>BB: ${d.bb||'-'} kg - TB: ${d.tb||'-'} cm - LK: ${d.lk||'-'} cm<br>Imunisasi: ${d.imun||'-'} - KB: ${d.kb||'-'} - IVA: ${d.iva||'-'}<br><span class="text-xs text-gray-400">${d.tanggal}</span></div>`).join('')}
-function exportCSV(){let data=JSON.parse(localStorage.getItem('bakepo_data')||'[]');if(!data.length){alert('Belum ada data!');return}let csv='Nama,Menu,BB,TB,LK,Umur,Imunisasi,KB,IVA,Tanggal\n'+data.map(d=>`"${d.nama}","${d.menu}","${d.bb}","${d.tb}","${d.lk}","${d.umur}","${d.imun}","${d.kb}","${d.iva}","${d.tanggal}"`).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='laporan-bakepo-ceria.csv';a.click()}
-function hapusSemua(){if(confirm('Hapus semua data?')){localStorage.removeItem('bakepo_data');tampilLaporan()}}
-let saved=localStorage.getItem('bakepo_bidan');if(saved){document.getElementById('namaBidan').value=saved;document.getElementById('hiBidan').innerText=saved}
+let bidan="", data=[];
+let kmsData=[];
+function login(){
+  bidan=document.getElementById('namaBidan').value||"Bidan";
+  if(!bidan){alert('Isi nama bidan dulu!');return}
+  document.getElementById('login').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('infoBidan').innerText="Login sebagai: "+bidan+" | Hari ini: "+new Date().toLocaleDateString('id-ID');
+  renderDash();
+}
+function logout(){ location.reload(); }
+function show(id){
+  ['dash','bayi','imun','hamil','kb','kespro','konseling'].forEach(x=>{
+    document.getElementById(x).style.display=x===id?'block':'none';
+    document.getElementById('b-'+x).classList.toggle('active',x===id);
+  });
+}
+function today(){ return new Date().toISOString().slice(0,10); }
+function addDays(d, n){ let dt=new Date(d); dt.setDate(dt.getDate()+n); return dt.toISOString().slice(0,10); }
+function addMonths(d, n){ let dt=new Date(d); dt.setMonth(dt.getMonth()+n); return dt.toISOString().slice(0,10); }
+
+function simpanBayi(){
+  let nama=document.getElementById('b_nama').value;
+  let bb=parseFloat(document.getElementById('b_bb').value);
+  if(!nama||!bb){alert('Isi Nama & BB dulu ya Isra!');return}
+  let tb=document.getElementById('b_tb').value||"-";
+  let status = bb>=7 ? "GIZI BAIK - BB/U Normal (WHO)" : "GIZI KURANG - Perlu Perhatian";
+  let tindak = bb>=7 ? "Timbang lagi 1 bulan lagi, lanjut ASI & MPASI" : "RUJUK KE PUSKESMAS - Konseling Gizi Intensif";
+  let kpsp=document.getElementById('b_kpsp').value;
+  kmsData.push(bb); gambarKMS();
+  data.push({tgl:today(), nama, jenisPasien:"Bayi / Balita", jenisKunj:document.getElementById('b_kunj').value, layan:"Penimbangan BB "+bb+" kg, TB "+tb+" cm, LK "+(document.getElementById('b_lk').value||"-")+" cm, LILA "+(document.getElementById('b_lila').value||"-")+" cm, KPSP: "+kpsp, hasil:"BB "+bb+" kg, TB "+tb+" cm | "+status+" | KPSP: "+kpsp, tindak, kembali:addMonths(today(),1), bidan});
+  document.getElementById('hasilBayi').innerHTML=`<div class="hasil ${bb>=7?'sehat':'kurang'}">${nama} : ${status}<br>Tindak Lanjut: ${tindak}<br>Kembali: ${addMonths(today(),1)}</div><button class="btn u" onclick="show('imun');document.getElementById('i_nama').value='${nama}'">LANJUT KE IMUNISASI →</button>`;
+  renderDash(); alert('Tersimpan! Cek Dashboard ya.');
+}
+function gambarKMS(){
+  let c=document.getElementById('grafikKMS'); let ctx=c.getContext('2d'); ctx.clearRect(0,0,600,180);
+  ctx.fillStyle="#D1FAE5"; ctx.fillRect(0,20,600,50); ctx.fillStyle="#FEF3C7"; ctx.fillRect(0,70,600,40); ctx.fillStyle="#FEE2E2"; ctx.fillRect(0,110,600,40);
+  ctx.fillStyle="#333"; ctx.font="12px Arial"; ctx.fillText("HIJAU = Normal",10,15); ctx.fillText("KUNING = Waspada",10,95); ctx.fillText("MERAH = Rujuk",10,135);
+  ctx.fillStyle="#7C3AED"; ctx.beginPath();
+  kmsData.forEach((v,i)=>{ let x=40+i*70; let y=140 - v*8; if(i==0) ctx.moveTo(x,y); else ctx.lineTo(x,y); ctx.fillRect(x-3,y-3,6,6); });
+  ctx.strokeStyle="#7C3AED"; ctx.lineWidth=3; ctx.stroke();
+}
+function autoKembali(){
+  let t=document.getElementById('i_tgl').value||today();
+  document.getElementById('i_tgl').value=t;
+  document.getElementById('i_kembali').value=addMonths(t,1);
+  let j=document.getElementById('i_jenis').value;
+  if(j.includes("Vitamin")) document.getElementById('i_kembali').value=addMonths(t,6);
+}
+function simpanImun(){
+  let nama=document.getElementById('i_nama').value; if(!nama){alert('Isi nama!');return}
+  autoKembali();
+  let jenis=document.getElementById('i_jenis').value;
+  let kipi=document.getElementById('i_kipi').value;
+  data.push({tgl:document.getElementById('i_tgl').value||today(), nama, jenisPasien:"Bayi / Balita", jenisKunj:"Imunisasi", layan:document.getElementById('i_layan').value+" - "+jenis, hasil:jenis+" sudah diberikan. KIPI: "+kipi, tindak:document.getElementById('i_tindak').value, kembali:document.getElementById('i_kembali').value, bidan});
+  document.getElementById('hasilImun').innerHTML=`<div class="hasil sehat">✅ ${nama} - ${jenis} tersimpan! Kembali: ${document.getElementById('i_kembali').value}</div>`;
+  renderDash(); show('dash');
+}
+function simpanHamil(){
+  let nama=document.getElementById('h_nama').value; if(!nama){alert('Isi nama!');return}
+  data.push({tgl:today(), nama, jenisPasien:"Ibu Hamil / Nifas", jenisKunj:"ANC Ibu Hamil", layan:document.getElementById('h_layan').value+" - UK "+document.getElementById('h_uk').value+" minggu, TD "+document.getElementById('h_td').value, hasil:document.getElementById('h_hasil').value+" | "+document.getElementById('h_hb').value, tindak:document.getElementById('h_tindak').value, kembali:addMonths(today(),1), bidan});
+  renderDash(); show('dash');
+}
+function autoKB(){
+  let t=document.getElementById('k_tgl').value||today(); document.getElementById('k_tgl').value=t;
+  let m=document.getElementById('k_metode').value;
+  let kembali = m=="Suntik 1 Bulan"? addMonths(t,1) : m=="Suntik 3 Bulan"? addMonths(t,3) : m=="Pil"? addDays(t,30) : m=="Implant"? addMonths(t,36) : addMonths(t,12);
+  document.getElementById('k_kembali').value=kembali;
+}
+function simpanKB(){
+  let nama=document.getElementById('k_nama').value; if(!nama){alert('Isi nama!');return}
+  autoKB();
+  data.push({tgl:document.getElementById('k_tgl').value||today(), nama, jenisPasien:"Akseptor KB / WUS", jenisKunj:"KB", layan:document.getElementById('k_layan').value+" - Metode: "+document.getElementById('k_metode').value, hasil:"KB "+document.getElementById('k_metode').value+" diberikan. Efek: "+document.getElementById('k_efek').value, tindak:document.getElementById('k_tindak').value, kembali:document.getElementById('k_kembali').value, bidan});
+  renderDash(); show('dash');
+}
+function simpanKespro(){
+  let nama=document.getElementById('s_nama').value; if(!nama){alert('Isi nama!');return}
+  data.push({tgl:today(), nama, jenisPasien:document.getElementById('s_kat').value, jenisKunj:document.getElementById('s_kunj').value, layan:document.getElementById('s_layan').value, hasil:document.getElementById('s_hasil').value, tindak:document.getElementById('s_tindak').value, kembali:addMonths(today(),1), bidan});
+  renderDash(); show('dash');
+}
+function simpanKons(){
+  let nama=document.getElementById('c_nama').value; if(!nama){alert('Isi nama!');return}
+  data.push({tgl:today(), nama, jenisPasien:"Konseling", jenisKunj:"Konseling", layan:"Konseling "+document.getElementById('c_topik').value, hasil:document.getElementById('c_hasil').value, tindak:document.getElementById('c_tindak').value, kembali:addMonths(today(),1), bidan});
+  renderDash(); show('dash');
+}
+function renderDash(){
+  let cari=(document.getElementById('cari')?.value||"").toLowerCase();
+  let fil=document.getElementById('filterJenis')?.value||"";
+  let tampil=data.filter(d=> (!cari||d.nama.toLowerCase().includes(cari)) && (!fil||d.jenisKunj==fil) );
+  document.getElementById('tot').innerText=data.length;
+  document.getElementById('totRujuk').innerText=data.filter(d=> (d.hasil+d.tindak).toLowerCase().includes("rujuk")).length;
+  let html=`<table><tr><th>Tanggal</th><th>Nama Pasien</th><th>Jenis Pasien</th><th>Jenis Kunjungan</th><th>Pelayanan Bidan</th><th>Hasil Pemeriksaan</th><th>Tindak Lanjut</th><th>Tanggal Kembali</th><th>Bidan</th></tr>`;
+  if(tampil.length==0) html+=`<tr><td colspan=9 style="text-align:center">Belum ada data. Klik "Isi Contoh Data" untuk demo, atau isi lewat menu di atas.</td></tr>`;
+  tampil.forEach(d=>{
+    let warna = (d.hasil+d.tindak).toLowerCase().includes("rujuk") ? "background:#FEE2E2" : (d.hasil.toLowerCase().includes("baik")||d.hasil.toLowerCase().includes("negatif")||d.hasil.toLowerCase().includes("normal")) ? "background:#D1FAE5" : "background:#FEF3C7";
+    html+=`<tr style="${warna}"><td>${d.tgl}</td><td><b>${d.nama}</b></td><td>${d.jenisPasien}</td><td>${d.jenisKunj}</td><td>${d.layan}</td><td>${d.hasil}</td><td><b>${d.tindak}</b></td><td>${d.kembali}</td><td>${d.bidan}</td></tr>`;
+  });
+  html+=`</table>`;
+  document.getElementById('tabelDash').innerHTML=html;
+}
+function contohData(){
+  bidan=bidan||"Bidan Yufa";
+  data.push(
+    {tgl:"2026-11-14", nama:"Aisyah", jenisPasien:"Bayi / Balita", jenisKunj:"Imunisasi", layan:"Pemberian Tetes Rotavirus + Penyuluhan ASI & Kebersihan - Rotavirus 1 - Tetes Mulut", hasil:"Rotavirus 1 sudah diberikan. KIPI: Tidak Ada KIPI | BB 8,5 kg - GIZI BAIK", tindak:"Kembali 14 Des 2026 untuk Rotavirus 2", kembali:"2026-12-14", bidan},
+    {tgl:"2026-11-14", nama:"Ibu Sari", jenisPasien:"Akseptor KB / WUS", jenisKunj:"KB", layan:"Konseling + Pemberian KB - Metode: Suntik 3 Bulan", hasil:"KB Suntik 3 Bulan diberikan. Efek: Tidak Ada Keluhan", tindak:"Lanjut metode sama, kontrol 14 Feb 2027", kembali:"2027-02-14", bidan},
+    {tgl:"2026-11-14", nama:"Ibu Ani", jenisPasien:"Wanita Usia Subur (15-49 th)", jenisKunj:"IVA / Kespro", layan:"Tes IVA + Konseling", hasil:"IVA Negatif - Normal", tindak:"Ulang IVA 3-5 tahun", kembali:"2027-11-14", bidan}
+  );
+  renderDash(); alert('Contoh data sudah masuk! Coba cek Dashboard & Cetak.');
+}
+renderDash();
 </script>
 </body>
 </html>
