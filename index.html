@@ -94,19 +94,49 @@ canvas{width:100%;height:180px;background:#F9FAFB;border-radius:12px;margin-top:
 
 <!-- IMUNISASI -->
 <div id="imun" class="card" style="display:none">
-<span class="step">MENU IMUNISASI - Jadwal Kemenkes 2024 & WHO</span>
+<span class="step">MENU IMUNISASI - Jadwal Kemenkes 2024 & WHO - BISA PILIH BANYAK SEKALIGUS</span>
 <label>Nama Pasien (Bayi / Balita) *</label><input id="i_nama" placeholder="Contoh: Aisyah">
-<label>Jenis Imunisasi *</label>
-<select id="i_jenis" onchange="autoKembali()">
-<option>Hepatitis B</option><option>BCG</option><option>Polio</option>
-<option>DPT-HB-Hib 1</option><option>DPT-HB-Hib 2</option><option>DPT-HB-Hib 3</option>
-<option>Rotavirus 1 - Tetes Mulut</option><option>Rotavirus 2 - Tetes Mulut</option><option>Rotavirus 3 - Tetes Mulut (RotaTeq)</option>
-<option>PCV 1</option><option>PCV 2</option><option>PCV 3</option>
-<option>IPV</option><option>Campak Rubella</option><option>DPT-HB-Hib Lanjutan</option><option>Campak Rubella Lanjutan</option>
-<option>Vitamin A Biru (6-11 bln)</option><option>Vitamin A Merah (12-59 bln)</option><option>Obat Cacing</option>
+<label>Umur Bayi Saat Ini</label>
+<select id="i_umur" onchange="paketUsia()">
+<option value="">-- Pilih Umur / Paket --</option>
+<option value="0">0 - 7 Hari: Hepatitis B</option>
+<option value="1">1 Bulan: BCG + Polio 1</option>
+<option value="2">2 Bulan: DPT 1 + Polio 2 + Rotavirus 1 + PCV 1</option>
+<option value="3">3 Bulan: DPT 2 + Polio 3 + Rotavirus 2 + PCV 2</option>
+<option value="4">4 Bulan: DPT 3 + Polio 4 + IPV + Rotavirus 3 + PCV 3</option>
+<option value="9">9 Bulan: Campak Rubella</option>
+<option value="18">18 Bulan: DPT Lanjutan + Campak Lanjutan</option>
+<option value="manual">Pilih Manual (Centang Sendiri)</option>
 </select>
+<p style="font-size:12px;color:#7C3AED;font-weight:bold">👇 Centang semua imunisasi yang diberikan hari ini (bisa lebih dari 1):</p>
+
+<div style="background:#F9F5FF;padding:12px;border-radius:12px">
+<label><input type="checkbox" class="imun-check" value="Hepatitis B"> Hepatitis B</label>
+<label><input type="checkbox" class="imun-check" value="BCG"> BCG</label>
+<label><input type="checkbox" class="imun-check" value="Polio 1"> Polio 1</label>
+<label><input type="checkbox" class="imun-check" value="Polio 2"> Polio 2</label>
+<label><input type="checkbox" class="imun-check" value="Polio 3"> Polio 3</label>
+<label><input type="checkbox" class="imun-check" value="Polio 4"> Polio 4</label>
+<label><input type="checkbox" class="imun-check" value="DPT-HB-Hib 1"> DPT-HB-Hib 1</label>
+<label><input type="checkbox" class="imun-check" value="DPT-HB-Hib 2"> DPT-HB-Hib 2</label>
+<label><input type="checkbox" class="imun-check" value="DPT-HB-Hib 3"> DPT-HB-Hib 3</label>
+<label><input type="checkbox" class="imun-check" value="Rotavirus 1 - Tetes Mulut"> ✅ Rotavirus 1 - Tetes Mulut</label>
+<label><input type="checkbox" class="imun-check" value="Rotavirus 2 - Tetes Mulut"> ✅ Rotavirus 2 - Tetes Mulut</label>
+<label><input type="checkbox" class="imun-check" value="Rotavirus 3 - Tetes Mulut"> ✅ Rotavirus 3 - Tetes Mulut</label>
+<label><input type="checkbox" class="imun-check" value="PCV 1"> PCV 1</label>
+<label><input type="checkbox" class="imun-check" value="PCV 2"> PCV 2</label>
+<label><input type="checkbox" class="imun-check" value="PCV 3"> PCV 3</label>
+<label><input type="checkbox" class="imun-check" value="IPV"> IPV</label>
+<label><input type="checkbox" class="imun-check" value="Campak Rubella"> Campak Rubella</label>
+<label><input type="checkbox" class="imun-check" value="DPT-HB-Hib Lanjutan"> DPT-HB-Hib Lanjutan</label>
+<label><input type="checkbox" class="imun-check" value="Campak Rubella Lanjutan"> Campak Rubella Lanjutan</label>
+<label><input type="checkbox" class="imun-check" value="Vitamin A Biru"> Vitamin A Biru</label>
+<label><input type="checkbox" class="imun-check" value="Vitamin A Merah"> Vitamin A Merah</label>
+<label><input type="checkbox" class="imun-check" value="Obat Cacing"> Obat Cacing</label>
+</div>
+
 <label>Pelayanan Yang Diberikan Bidan *</label>
-<select id="i_layan"><option>Skrining + Penyuluhan + Penyuntikan + Observasi 30 menit KIPI</option><option>Pemberian Tetes Rotavirus + Penyuluhan ASI & Kebersihan</option><option>Pemberian Vitamin A + Penyuluhan Gizi</option><option>Penimbangan + Penyuluhan + Imunisasi</option></select>
+<select id="i_layan"><option>Skrining + Penyuluhan + Penyuntikan / Tetes + Observasi 30 menit KIPI</option><option>Pemberian Tetes Rotavirus + Penyuluhan ASI & Kebersihan</option><option>Pemberian Vitamin A + Penyuluhan Gizi</option></select>
 <label>Tanggal Imunisasi</label><input id="i_tgl" type="date">
 <label>Tanggal Kembali (Otomatis)</label><input id="i_kembali" type="date" readonly>
 <label>KIPI / Efek Samping</label><select id="i_kipi"><option>Tidak Ada KIPI</option><option>Demam Ringan</option><option>Rewel</option><option>Diare Ringan</option><option>Bengkak Bekas Suntik</option></select>
