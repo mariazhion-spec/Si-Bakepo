@@ -238,20 +238,34 @@ function gambarKMS(){
   kmsData.forEach((v,i)=>{ let x=40+i*70; let y=140 - v*8; if(i==0) ctx.moveTo(x,y); else ctx.lineTo(x,y); ctx.fillRect(x-3,y-3,6,6); });
   ctx.strokeStyle="#7C3AED"; ctx.lineWidth=3; ctx.stroke();
 }
+function paketUsia(){
+  let u = document.getElementById('i_umur').value;
+  document.querySelectorAll('.imun-check').forEach(c=>c.checked=false);
+  let pilih = [];
+  if(u=="0") pilih=["Hepatitis B"];
+  if(u=="1") pilih=["BCG","Polio 1"];
+  if(u=="2") pilih=["DPT-HB-Hib 1","Polio 2","Rotavirus 1 - Tetes Mulut","PCV 1"];
+  if(u=="3") pilih=["DPT-HB-Hib 2","Polio 3","Rotavirus 2 - Tetes Mulut","PCV 2"];
+  if(u=="4") pilih=["DPT-HB-Hib 3","Polio 4","IPV","Rotavirus 3 - Tetes Mulut","PCV 3"];
+  if(u=="9") pilih=["Campak Rubella"];
+  if(u=="18") pilih=["DPT-HB-Hib Lanjutan","Campak Rubella Lanjutan"];
+  document.querySelectorAll('.imun-check').forEach(c=>{ if(pilih.includes(c.value)) c.checked=true; });
+  autoKembali();
+}
 function autoKembali(){
   let t=document.getElementById('i_tgl').value||today();
   document.getElementById('i_tgl').value=t;
   document.getElementById('i_kembali').value=addMonths(t,1);
-  let j=document.getElementById('i_jenis').value;
-  if(j.includes("Vitamin")) document.getElementById('i_kembali').value=addMonths(t,6);
 }
 function simpanImun(){
   let nama=document.getElementById('i_nama').value; if(!nama){alert('Isi nama!');return}
+  let dipilih = [...document.querySelectorAll('.imun-check:checked')].map(c=>c.value);
+  if(dipilih.length==0){alert('Centang dulu minimal 1 imunisasi!');return}
   autoKembali();
-  let jenis=document.getElementById('i_jenis').value;
+  let jenis = dipilih.join(" + ");
   let kipi=document.getElementById('i_kipi').value;
-  data.push({tgl:document.getElementById('i_tgl').value||today(), nama, jenisPasien:"Bayi / Balita", jenisKunj:"Imunisasi", layan:document.getElementById('i_layan').value+" - "+jenis, hasil:jenis+" sudah diberikan. KIPI: "+kipi, tindak:document.getElementById('i_tindak').value, kembali:document.getElementById('i_kembali').value, bidan});
-  document.getElementById('hasilImun').innerHTML=`<div class="hasil sehat">✅ ${nama} - ${jenis} tersimpan! Kembali: ${document.getElementById('i_kembali').value}</div>`;
+  data.push({tgl:document.getElementById('i_tgl').value||today(), nama, jenisPasien:"Bayi / Balita", jenisKunj:"Imunisasi", layan:document.getElementById('i_layan').value+" - "+dipilih.length+" jenis imunisasi", hasil:jenis+" sudah diberikan. KIPI: "+kipi, tindak:document.getElementById('i_tindak').value, kembali:document.getElementById('i_kembali').value, bidan});
+  document.getElementById('hasilImun').innerHTML=`<div class="hasil sehat">✅ ${nama} - ${jenis} tersimpan! (${dipilih.length} imunisasi sekaligus) Kembali: ${document.getElementById('i_kembali').value}</div>`;
   renderDash(); show('dash');
 }
 function simpanHamil(){
