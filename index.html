@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SI-BAKEPO CERIA</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+.grad{background:linear-gradient(135deg,#7c3aed,#ec4899)}
+.card{cursor:pointer}
+.hidden2{display:none}
+</style>
+</head>
+<body class="bg-pink-50 min-h-screen font-sans">
+
+<!-- LOGIN -->
+<div id="loginPage" class="max-w-md mx-auto pt-16 px-4">
+<div class="bg-white rounded-3xl shadow-xl p-6 text-center">
+<p class="text-4xl font-bold text-purple-700">SI-BAKEPO CERIA</p>
+<p class="text-sm text-gray-500 mt-2">BAyita - KEluarga Berencana - KesPO<br>Kelompok 5 dan 6 - Dosen: Ibu Yufa</p>
+<input id="namaBidan" placeholder="Input Nama Bidan..." class="w-full mt-5 border rounded-xl p-3">
+<button onclick="login()" class="w-full grad text-white font-bold rounded-xl p-3 mt-3">Masuk Dashboard</button>
+<p class="text-xs text-gray-400 mt-3">Data auto-save di HP - Tidak hilang</p>
+</div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashPage" class="max-w-md mx-auto px-4 pt-6 hidden2">
+<div class="grad rounded-3xl text-white p-5">
+<p class="text-sm opacity-80">Selamat Datang Bidan,</p>
+<h2 id="hiBidan" class="text-xl font-bold">Bidan</h2>
+<p class="text-xs opacity-80">Pilih 1 menu di bawah - Data tersimpan otomatis</p>
+</div>
+<div class="grid grid-cols-2 gap-3 mt-4">
+<div onclick="openMenu('bayi')" class="card bg-white rounded-2xl shadow p-4 text-center"><b>1. BA - BAYI</b><p class="text-xs text-gray-500">BB / TB / LK - KPSP / KMS</p></div>
+<div onclick="openMenu('balita')" class="card bg-white rounded-2xl shadow p-4 text-center"><b>2. BALITA</b><p class="text-xs text-gray-500">Tumbuh Kembang - KMS</p></div>
+<div onclick="openMenu('imunisasi')" class="card bg-white rounded-2xl shadow p-4 text-center"><b>3. IMUNISASI</b><p class="text-xs text-gray-500">BCG - Polio - DPT - Campak</p></div>
+<div onclick="openMenu('kb')" class="card bg-white rounded-2xl shadow p-4 text-center"><b>4. KE - KB</b><p class="text-xs text-gray-500">Konseling - Metode - Kontrol</p></div>
+</div>
+<div onclick="openMenu('iva')" class="card bg-white rounded-2xl shadow p-4 text-center mt-3"><b>5. PO - KESPRO IVA TEST</b><p class="text-xs text-gray-500">WUS 30-50 Th - Asam Asetat 3-5% - Negatif / Positif</p></div>
+<button onclick="openMenu('laporan')" class="w-full bg-blue-600 text-white font-bold rounded-xl p-3 mt-4">LIHAT LAPORAN DAN EXPORT</button>
+<button onclick="logout()" class="w-full text-gray-500 text-sm mt-2">Keluar</button>
+<p class="text-center text-xs text-gray-400 mt-3">Referensi: Kemenkes 2020 - Kemenkes 2021 - IDAI 2024 - BKKBN - WHO IVA</p>
+</div>
+
+<!-- FORM -->
+<div id="formPage" class="max-w-md mx-auto px-4 pt-6 hidden2">
+<button onclick="backDash()" class="text-purple-700 font-bold">Kembali</button>
+<h2 id="formTitle" class="text-xl font-bold mt-2">Form</h2><p id="formDesc" class="text-sm text-gray-500"></p>
+<div class="bg-white rounded-2xl shadow p-4 mt-4 space-y-3">
+<div><label class="text-sm font-bold">Nama Pasien / Bayi / Ibu</label><input id="fNama" oninput="autoSave()" class="w-full border rounded-xl p-3" placeholder="Nama lengkap..."></div>
+<div class="grid grid-cols-3 gap-2">
+<div><label class="text-xs font-bold">BB (kg)</label><input id="fBB" type="number" oninput="autoSave();hitungGizi()" class="w-full border rounded-xl p-3" placeholder="0.0"></div>
+<div><label class="text-xs font-bold">TB (cm)</label><input id="fTB" type="number" oninput="autoSave()" class="w-full border rounded-xl p-3" placeholder="0"></div>
+<div><label class="text-xs font-bold">LK (cm)</label><input id="fLK" type="number" oninput="autoSave()" class="w-full border rounded-xl p-3" placeholder="0"></div>
+</div>
+<div><label class="text-sm font-bold">Umur / Keterangan</label><input id="fUmur" oninput="autoSave()" class="w-full border rounded-xl p-3" placeholder="Contoh: 6 bulan / 32 tahun"></div>
+
+<div id="boxBayi">
+<label class="text-sm font-bold">Skrining KPSP / KMS</label>
+<select id="fKPSP" onchange="autoSave()" class="w-full border rounded-xl p-3"><option>Sesuai</option><option>Meragukan</option><option>Penyimpangan</option></select>
+<label class="text-sm font-bold mt-2 block">Status Gizi (Otomatis)</label>
+<input id="fGizi" readonly class="w-full bg-yellow-50 border rounded-xl p-3 font-bold" placeholder="Isi BB dulu...">
+</div>
+
+<div id="boxImunisasi" class="hidden2">
+<label class="text-sm font-bold">Imunisasi yang Sudah Diberikan</label>
+<div class="grid grid-cols-2 gap-2 text-sm mt-1">
+<label><input type="checkbox" class="imun" value="HB0" onchange="autoSave()"> HB0 (0-24 jam)</label>
+<label><input type="checkbox" class="imun" value="BCG" onchange="autoSave()"> BCG (1 bln)</label>
+<label><input type="checkbox" class="imun" value="Polio" onchange="autoSave()"> Polio</label>
+<label><input type="checkbox" class="imun" value="DPT" onchange="autoSave()"> DPT-HB-Hib</label>
+<label><input type="checkbox" class="imun" value="IPV" onchange="autoSave()"> IPV</label>
+<label><input type="checkbox" class="imun" value="Campak-MR" onchange="autoSave()"> Campak-Rubela</label>
+</div>
+<p class="text-xs text-gray-500 mt-1">Jadwal IDAI 2024: 9 bln MR1, 18 bln DPT4 + MR2</p>
+</div>
+
+<div id="boxKB" class="hidden2">
+<label class="text-sm font-bold">Metode KB - Konseling ABPK / Roda KLOP</label>
+<select id="fKB" onchange="autoSave()" class="w-full border rounded-xl p-3"><option>Pil</option><option>Suntik</option><option>Implan</option><option>AKDR / IUD</option><option>Kondom</option><option>MOW / MOP</option></select>
+<label class="text-sm font-bold mt-2 block">Efek Samping</label>
+<input id="fEfek" oninput="autoSave()" class="w-full border rounded-xl p-3" placeholder="Contoh: Gangguan haid / kram...">
+<label class="text-sm font-bold mt-2 block">Jadwal Kontrol</label>
+<input id="fKontrol" type="date" onchange="autoSave()" class="w-full border rounded-xl p-3">
+<p class="text-xs text-gray-500">AKDR kontrol 7 hari / 4-6 minggu - Implan jaga kering 4 hari</p>
+</div>
+
+<div id="boxIVA" class="hidden2">
+<label class="text-sm font-bold">Hasil IVA Test - Oles Asam Asetat 3-5%</label>
+<select id="fIVA" onchange="autoSave();hitungIVA()" class="w-full border rounded-xl p-3"><option value="">Pilih Hasil...</option><option value="NEGATIF">NEGATIF - Tidak ada bercak putih</option><option value="POSITIF">POSITIF - Ada bercak putih Acetowhite</option></select>
+<div id="hasilIVA" class="font-bold rounded-xl p-3 mt-2 bg-gray-100">Belum dipilih</div>
+</div>
+
+<div><label class="text-sm font-bold">Catatan Bidan</label><textarea id="fCatatan" oninput="autoSave()" class="w-full border rounded-xl p-3" placeholder="Catatan..."></textarea></div>
+<button onclick="simpanData()" class="w-full grad text-white font-bold rounded-xl p-3">SIMPAN DATA</button>
+<p id="saveInfo" class="text-center text-xs text-green-600 font-bold"></p>
+</div>
+</div>
+
+<!-- LAPORAN -->
+<div id="lapPage" class="max-w-md mx-auto px-4 pt-6 hidden2">
+<button onclick="backDash()" class="text-purple-700 font-bold">Kembali</button>
+<h2 class="text-xl font-bold mt-2">Laporan dan Evaluasi</h2><p class="text-sm text-gray-500">Semua data dari LocalStorage - Bisa di-export</p>
+<div id="listLaporan" class="space-y-2 mt-4"></div>
+<button onclick="exportCSV()" class="w-full bg-green-600 text-white font-bold rounded-xl p-3 mt-4">Export CSV / Excel</button>
+<button onclick="hapusSemua()" class="w-full text-red-500 text-sm mt-2">Hapus Semua Data</button>
+</div>
+
+<script>
+let menuAktif='bayi';
+const titles={bayi:['BA - BAYI','Registrasi Bayi - BB/TB/LK - KPSP/KMS - Status Gizi'],balita:['BALITA','Pemantauan Tumbuh Kembang - Plot KMS NAIK / TIDAK NAIK'],imunisasi:['IMUNISASI','BCG - Polio - DPT - Campak - HB0 - IPV - MR - IDAI 2024'],kb:['KE - KELUARGA BERENCANA','Konseling ABPK / Roda KLOP - Metode - Efek Samping - Kontrol'],iva:['PO - KESPRO IVA TEST','WUS 30-50 Th - Sudah Menikah - Tidak Haid / Hamil - Asam Asetat 3-5%']};
+function show(id){['loginPage','dashPage','formPage','lapPage'].forEach(x=>document.getElementById(x).classList.add('hidden2'));document.getElementById(id).classList.remove('hidden2')}
+function login(){let n=document.getElementById('namaBidan').value.trim();if(!n){alert('Isi Nama Bidan dulu ya!');return}localStorage.setItem('bakepo_bidan',n);document.getElementById('hiBidan').innerText=n;show('dashPage')}
+function logout(){show('loginPage')}
+function openMenu(m){if(m==='laporan'){tampilLaporan();show('lapPage');return}menuAktif=m;document.getElementById('formTitle').innerText=titles[m][0];document.getElementById('formDesc').innerText=titles[m][1];['boxBayi','boxImunisasi','boxKB','boxIVA'].forEach(x=>document.getElementById(x).classList.add('hidden2'));if(m==='bayi'||m==='balita')document.getElementById('boxBayi').classList.remove('hidden2');if(m==='imunisasi')document.getElementById('boxImunisasi').classList.remove('hidden2');if(m==='kb')document.getElementById('boxKB').classList.remove('hidden2');if(m==='iva')document.getElementById('boxIVA').classList.remove('hidden2');loadDraft();show('formPage')}
+function backDash(){show('dashPage')}
+function hitungGizi(){let bb=parseFloat(document.getElementById('fBB').value);let el=document.getElementById('fGizi');if(!bb){el.value='';return}if(bb<2.5)el.value='BB Sangat Rendah - Rujuk Segera';else if(bb<5)el.value='Perlu Pantau - Cek KMS';else el.value='BB Cukup - Lanjut Pantau KMS NAIK / TIDAK NAIK'}
+function hitungIVA(){let v=document.getElementById('fIVA').value;let el=document.getElementById('hasilIVA');if(v==='NEGATIF'){el.innerText='NEGATIF: Konseling Pencegahan - Kontrol Rutin';el.className='font-bold rounded-xl p-3 mt-2 bg-green-100 text-green-700'}else if(v==='POSITIF'){el.innerText='POSITIF: Rujukan Faskes Lanjutan SEGERA';el.className='font-bold rounded-xl p-3 mt-2 bg-red-100 text-red-700'}else{el.innerText='Belum dipilih';el.className='font-bold rounded-xl p-3 mt-2 bg-gray-100'}}
+function getForm(){let imun=[...document.querySelectorAll('.imun:checked')].map(e=>e.value).join(', ');return{menu:menuAktif,nama:document.getElementById('fNama').value,bb:document.getElementById('fBB').value,tb:document.getElementById('fTB').value,lk:document.getElementById('fLK').value,umur:document.getElementById('fUmur').value,kpsp:document.getElementById('fKPSP').value,gizi:document.getElementById('fGizi').value,imun:imun,kb:document.getElementById('fKB').value,efek:document.getElementById('fEfek').value,kontrol:document.getElementById('fKontrol').value,iva:document.getElementById('fIVA').value,catatan:document.getElementById('fCatatan').value,tanggal:new Date().toLocaleString('id-ID')}}
+function autoSave(){localStorage.setItem('bakepo_draft_'+menuAktif,JSON.stringify(getForm()));document.getElementById('saveInfo').innerText='Auto-save: tersimpan di HP'}
+function loadDraft(){let d=JSON.parse(localStorage.getItem('bakepo_draft_'+menuAktif)||'null');if(!d)return;document.getElementById('fNama').value=d.nama||'';document.getElementById('fBB').value=d.bb||'';document.getElementById('fTB').value=d.tb||'';document.getElementById('fLK').value=d.lk||'';document.getElementById('fUmur').value=d.umur||'';document.getElementById('fCatatan').value=d.catatan||'';hitungGizi();hitungIVA()}
+function simpanData(){let data=JSON.parse(localStorage.getItem('bakepo_data')||'[]');data.push(getForm());localStorage.setItem('bakepo_data',JSON.stringify(data));alert('Data tersimpan! Lihat di Laporan ya.');backDash()}
+function tampilLaporan(){let data=JSON.parse(localStorage.getItem('bakepo_data')||'[]');let el=document.getElementById('listLaporan');if(!data.length){el.innerHTML='<p class="bg-white rounded-xl p-4 text-center text-gray-500">Belum ada data. Isi form dulu ya!</p>';return}el.innerHTML=data.map((d,i)=>`<div class="bg-white rounded-xl shadow p-3 text-sm"><b>${i+1}. ${d.nama||'-'} - ${d.menu.toUpperCase()}</b><br>BB: ${d.bb||'-'} kg - TB: ${d.tb||'-'} cm - LK: ${d.lk||'-'} cm<br>Imunisasi: ${d.imun||'-'} - KB: ${d.kb||'-'} - IVA: ${d.iva||'-'}<br><span class="text-xs text-gray-400">${d.tanggal}</span></div>`).join('')}
+function exportCSV(){let data=JSON.parse(localStorage.getItem('bakepo_data')||'[]');if(!data.length){alert('Belum ada data!');return}let csv='Nama,Menu,BB,TB,LK,Umur,Imunisasi,KB,IVA,Tanggal\n'+data.map(d=>`"${d.nama}","${d.menu}","${d.bb}","${d.tb}","${d.lk}","${d.umur}","${d.imun}","${d.kb}","${d.iva}","${d.tanggal}"`).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='laporan-bakepo-ceria.csv';a.click()}
+function hapusSemua(){if(confirm('Hapus semua data?')){localStorage.removeItem('bakepo_data');tampilLaporan()}}
+let saved=localStorage.getItem('bakepo_bidan');if(saved){document.getElementById('namaBidan').value=saved;document.getElementById('hiBidan').innerText=saved}
+</script>
+</body>
+</html>
